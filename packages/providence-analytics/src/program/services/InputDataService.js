@@ -4,6 +4,7 @@ require('../types/index.js');
 
 const fs = require('fs');
 const pathLib = require('path');
+
 const child_process = require('child_process'); // eslint-disable-line camelcase
 const glob = require('glob');
 const anymatch = require('anymatch');
@@ -87,11 +88,11 @@ function ensureArray(v) {
   return Array.isArray(v) ? v : [v];
 }
 
-function multiGlobSync(patterns, { keepDirs = false } = {}) {
+function multiGlobSync(patterns, { keepDirs = false, root } = {}) {
   patterns = ensureArray(patterns);
   const res = new Set();
   patterns.forEach(pattern => {
-    const files = glob.sync(pattern);
+    const files = glob.sync(pattern, { root });
     files.forEach(filePath => {
       if (fs.lstatSync(filePath).isDirectory() && !keepDirs) {
         return;
@@ -289,6 +290,11 @@ class InputDataService {
   static getGlobPattern(startPath, cfg, withoutDepth = false) {
     // if startPath ends with '/', remove
     let globPattern = startPath.replace(/\/$/, '');
+    // let globPattern = '';
+    if (process.platform === "win32") {
+      // root = root.replace(/^.\:/, '').replace(/\\/g, '/');
+      globPattern = globPattern.replace(/^.\:/, '').replace(/\\/g, '/');
+    }
     if (!withoutDepth) {
       if (cfg.depth !== Infinity) {
         globPattern += `/*`.repeat(cfg.depth + 1);
@@ -296,7 +302,8 @@ class InputDataService {
         globPattern += `/**/*`;
       }
     }
-    return globPattern;
+    // globPattern = globPattern.slice(1)
+    return { globPattern }; 
   }
 
   /**
@@ -350,14 +357,14 @@ class InputDataService {
       }
     });
 
-    let globPattern = this.getGlobPattern(startPath, cfg);
+    let { globPattern } = this.getGlobPattern(startPath, cfg);
     globPattern += `.{${cfg.extensions.map(e => e.slice(1)).join(',')},}`;
     const globRes = multiGlobSync(globPattern);
 
     let filteredGlobRes;
     if (removeFilter.length || keepFilter.length) {
       filteredGlobRes = globRes.filter(filePath => {
-        const localFilePath = filePath.replace(`${startPath}/`, '');
+        const localFilePath = filePath.replace(`${startPath}${pathLib.sep}`, '');
         let shouldRemove = removeFilter.length && anymatch(removeFilter, localFilePath);
         let shouldKeep = keepFilter.length && anymatch(keepFilter, localFilePath);
 
@@ -382,9 +389,13 @@ class InputDataService {
         return shouldKeep;
       });
     }
+
     if (!filteredGlobRes || !filteredGlobRes.length) {
       LogService.warn(`No files found for path '${startPath}'`);
     }
+
+    // reappend startPath
+    // const res = filteredGlobRes.map(f => pathLib.resolve(startPath, f));
     return filteredGlobRes;
   }
 

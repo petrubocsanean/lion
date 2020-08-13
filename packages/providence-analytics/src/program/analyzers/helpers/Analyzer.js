@@ -81,6 +81,28 @@ function ensureAnalyzerResultFormat(queryOutput, configuration, analyzer) {
       }
     });
   }
+
+  if (process.platform === "win32") {
+    // make everything a posix path
+    function posixify(data) {
+      if (!data) {
+        return;
+      }
+      if (Array.isArray(data)) {
+        data.forEach(entry => posixify(entry));
+      } else if (typeof data === 'object') {
+        Object.entries(data).forEach(([k, v]) => {
+          if (Array.isArray(v) || typeof v === 'object') {
+            posixify(v);
+          } else if (typeof v === 'string' && k === 'file') {
+            data[k] = v.replace(/\\/g, '/');
+          }
+        });
+      } 
+    }
+    posixify(aResult);
+  }
+  
   return aResult;
 }
 
