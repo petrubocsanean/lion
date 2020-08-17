@@ -7,6 +7,7 @@ const { QueryService } = require('../../services/QueryService.js');
 const { ReportService } = require('../../services/ReportService.js');
 const { InputDataService } = require('../../services/InputDataService.js');
 const { aForEach } = require('../../utils/async-array-utils.js');
+const { toPosixPath } = require('../../utils/to-posix-path.js');
 const { getFilePathRelativeFromRoot } = require('../../utils/get-file-path-relative-from-root.js');
 
 /**
@@ -25,6 +26,30 @@ async function analyzePerAstEntry(projectData, astAnalysis) {
   });
   const filteredEntries = entries.filter(({ result }) => Boolean(result.length));
   return filteredEntries;
+}
+
+
+/**
+ * Transforms QueryResult entries to posix path notations on Windows
+ * @param {array|object} data 
+ */
+function posixify(data) {
+  if (!data) {
+    return;
+  }
+  if (Array.isArray(data)) {
+    data.forEach(posixify);
+  } else if (typeof data === 'object') {
+    Object.entries(data).forEach(([k, v]) => {
+      if (Array.isArray(v) || typeof v === 'object') {
+        posixify(v);
+      } 
+      // TODO: detect whether filePath instead of restricting by key name?
+      else if (typeof v === 'string' && k === 'file') { 
+        data[k] = toPosixPath(v);
+      }
+    });
+  } 
 }
 
 /**
@@ -83,26 +108,9 @@ function ensureAnalyzerResultFormat(queryOutput, configuration, analyzer) {
   }
 
   if (process.platform === "win32") {
-    // make everything a posix path
-    function posixify(data) {
-      if (!data) {
-        return;
-      }
-      if (Array.isArray(data)) {
-        data.forEach(entry => posixify(entry));
-      } else if (typeof data === 'object') {
-        Object.entries(data).forEach(([k, v]) => {
-          if (Array.isArray(v) || typeof v === 'object') {
-            posixify(v);
-          } else if (typeof v === 'string' && k === 'file') {
-            data[k] = v.replace(/\\/g, '/');
-          }
-        });
-      } 
-    }
     posixify(aResult);
   }
-  
+
   return aResult;
 }
 
