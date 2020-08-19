@@ -33,6 +33,7 @@ describe('others-calendar', () => {
         initialVirtualTime: new Date('2000/12/15').getTime() / 1000,
       },
     });
+    await page.waitForSelector('button');
     await page.evaluate(() => {
       document.querySelector('button').click();
     });

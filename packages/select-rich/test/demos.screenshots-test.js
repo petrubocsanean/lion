@@ -11,6 +11,7 @@ describe('forms-select-rich', () => {
   it('main-opened', async () => {
     const id = `forms-select-rich--main`;
     const page = await getStoryPage(id);
+    await page.waitForSelector(selector);
     await page.evaluate(() => {
       const el = document.querySelector('lion-select-rich');
       el.opened = true;
@@ -30,6 +31,7 @@ describe('forms-select-rich', () => {
   it('options-with-html-opened', async () => {
     const id = `forms-select-rich--options-with-html`;
     const page = await getStoryPage(id);
+    await page.waitForSelector(selector);
     await page.evaluate(() => {
       const el = document.querySelector('lion-select-rich');
       el.opened = true;
@@ -44,6 +46,7 @@ describe('forms-select-rich', () => {
   it('many-options-with-scrolling-opened', async () => {
     const id = `forms-select-rich--many-options-with-scrolling`;
     const page = await getStoryPage(id);
+    await page.waitForSelector(selector);
     await page.evaluate(() => {
       const el = document.querySelector('lion-select-rich');
       el.opened = true;
@@ -68,6 +71,7 @@ describe('forms-select-rich', () => {
   it('disabled-option-opened', async () => {
     const id = `forms-select-rich--disabled-option`;
     const page = await getStoryPage(id);
+    await page.waitForSelector(selector);
     await page.evaluate(() => {
       const el = document.querySelector('lion-select-rich');
       el.opened = true;
@@ -82,6 +86,7 @@ describe('forms-select-rich', () => {
   it('validation', async () => {
     const id = `forms-select-rich--validation`;
     const page = await getStoryPage(id);
+    await page.waitForSelector(selector);
     await page.evaluate(() => {
       const el = document.querySelector('lion-select-rich');
       el.updateComplete.then(() => {
