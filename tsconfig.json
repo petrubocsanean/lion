@@ -11,7 +11,8 @@
     "noImplicitThis": true,
     "alwaysStrict": true,
     "types": ["node", "mocha", "sinon"],
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "suppressImplicitAnyIndexErrors": true
   },
   "include": [
     "packages/core/**/*.js",

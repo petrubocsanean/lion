@@ -27,7 +27,7 @@ export class Validator {
    * @desc The function that returns a Boolean
    * @param {?} [modelValue]
    * @param {?} [param]
-   * @param {{}} config
+   * @param {{}} [config]
    * @returns {Boolean|Promise<Boolean>}
    */
   // eslint-disable-next-line no-unused-vars, class-methods-use-this
