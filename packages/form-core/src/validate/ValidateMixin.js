@@ -13,7 +13,6 @@ import { Required } from './validators/Required.js';
 
 /**
  * @typedef {import('../../types/validate/ValidateMixinTypes').ValidateMixin} ValidateMixin
- * @typedef {import('@open-wc/dedupe-mixin').Constructor<LitElement>} Constructor
  */
 
 /**
@@ -504,9 +503,10 @@ export const ValidateMixinImplementation = superclass =>
           throw new Error(errorMessage);
         }
         const ctor = /** @type {typeof ValidateMixin} */ (this.constructor);
+        const vCtor = /** @type {typeof Validator} */ (v.constructor);
         if (ctor.validationTypes.indexOf(v.type) === -1) {
           // throws in constructor are not visible to end user so we do both
-          const errorMessage = `This component does not support the validator type "${v.type}" used in "${v.constructor.validatorName}". You may change your validators type or add it to the components "static get validationTypes() {}".`;
+          const errorMessage = `This component does not support the validator type "${v.type}" used in "${vCtor.validatorName}". You may change your validators type or add it to the components "static get validationTypes() {}".`;
           // eslint-disable-next-line no-console
           console.error(errorMessage, this);
           throw new Error(errorMessage);
