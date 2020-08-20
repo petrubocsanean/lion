@@ -6,7 +6,6 @@ import { FormRegistrarPortalMixin } from '../src/registration/FormRegistrarPorta
 
 /**
  * @typedef {import('../types/registration/FormRegistrarMixinTypes').FormRegistrarHost} FormRegistrarHost
- * @typedef {import('../types/registration/FormRegistrarMixinTypes').FormRegistrarMixin} FormRegistrarMixin
  */
 
 /**

@@ -912,11 +912,11 @@ export function runValidateMixinSuite(customConfig) {
         if (el._inputNode) {
           const spy = sinon.spy(el._inputNode, 'setCustomValidity');
           el.modelValue = '';
-          expect(spy.callCount).to.be(1);
+          expect(spy.callCount).to.equal(1);
           // @ts-expect-error needs to be rewritten to new API
           expect(el.validationMessage).to.be('foo');
           el.modelValue = '123';
-          expect(spy.callCount).to.be(2);
+          expect(spy.callCount).to.equal(2);
           // @ts-expect-error needs to be rewritten to new API
           expect(el.validationMessage).to.be('');
         }

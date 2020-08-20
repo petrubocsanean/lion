@@ -1,7 +1,7 @@
 import { css, dedupeMixin, html, nothing, SlotMixin } from '@lion/core';
-import { Unparseable } from './validate/Unparseable.js';
 import { FormRegisteringMixin } from './registration/FormRegisteringMixin.js';
 import { getAriaElementsInRightDomOrder } from './utils/getAriaElementsInRightDomOrder.js';
+import { Unparseable } from './validate/Unparseable.js';
 
 /**
  * Generates random unique identifier (for dom elements)
@@ -23,6 +23,7 @@ function uuid(prefix) {
  * @typedef {import('@lion/core/types/SlotMixinTypes').SlotsMap} SlotsMap
  * @typedef {import('../types/FormControlMixinTypes.js').FormControlMixin} FormControlMixin
  * @type {FormControlMixin}
+ * @param {import('@open-wc/dedupe-mixin').Constructor<import('@lion/core').LitElement>} superclass
  */
 const FormControlMixinImplementation = superclass =>
   // eslint-disable-next-line no-shadow, no-unused-vars
@@ -112,7 +113,8 @@ const FormControlMixinImplementation = superclass =>
      * @return {string}
      */
     get fieldName() {
-      return this.__fieldName || this.label || this.name;
+      // @ts-ignore
+      return this.__fieldName || this.label || this.name; // FIXME: when LionField is typed we can inherit this prop
     }
 
     /**
@@ -197,7 +199,11 @@ const FormControlMixinImplementation = superclass =>
       this._ariaDescribedNodes = [];
       /** @type {'child' | 'choice-group' | 'fieldset'} */
       this._repropagationRole = 'child';
-      this.addEventListener('model-value-changed', this.__repropagateChildrenValues);
+      this._isRepropagationEndpoint = false;
+      this.addEventListener(
+        'model-value-changed',
+        /** @type {EventListenerOrEventListenerObject} */ (this.__repropagateChildrenValues),
+      );
     }
 
     connectedCallback() {
@@ -479,10 +485,15 @@ const FormControlMixinImplementation = superclass =>
     /**
      * @param {?} modelValue
      * @return {boolean}
+     *
+     * FIXME: Move to FormatMixin? Since there we have access to modelValue prop
      */
+    // @ts-ignore
     _isEmpty(modelValue = this.modelValue) {
       let value = modelValue;
+      // @ts-ignore
       if (this.modelValue instanceof Unparseable) {
+        // @ts-ignore
         value = this.modelValue.viewValue;
       }
 
@@ -629,7 +640,7 @@ const FormControlMixinImplementation = superclass =>
     }
 
     /**
-     * @return {HTMLElement[]}
+     * @return {Array.<HTMLElement|undefined>}
      */
     // Returns dom references to all elements that should be referred to by field(s)
     _getAriaDescriptionElements() {
@@ -681,10 +692,12 @@ const FormControlMixinImplementation = superclass =>
 
     /**
      * @param {string} slotName
-     * @return {HTMLElement}
+     * @return {HTMLElement | undefined}
      */
     __getDirectSlotChild(slotName) {
-      return [...this.children].find(el => el.slot === slotName);
+      return /** @type {HTMLElement[]} */ (Array.from(this.children)).find(
+        el => el.slot === slotName,
+      );
     }
 
     __dispatchInitialModelValueChangedEvent() {
@@ -756,6 +769,7 @@ const FormControlMixinImplementation = superclass =>
       // We only send the checked changed up (not the unchecked). In this way a choice group
       // (radio-group, checkbox-group, select/listbox) acts as an 'endpoint' (a single Field)
       // just like the native <select>
+      // @ts-expect-error multipleChoice is not directly available but only as side effect
       if (this._repropagationRole === 'choice-group' && !this.multipleChoice && !target.checked) {
         return;
       }

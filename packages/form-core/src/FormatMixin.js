@@ -1,7 +1,9 @@
 /* eslint-disable class-methods-use-this */
 
 import { dedupeMixin } from '@lion/core';
+import { FormControlMixin } from './FormControlMixin.js';
 import { Unparseable } from './validate/Unparseable.js';
+import { ValidateMixin } from './validate/ValidateMixin.js';
 
 /**
  * @typedef {import('../types/FormatMixinTypes').FormatMixin} FormatMixin
@@ -52,9 +54,11 @@ import { Unparseable } from './validate/Unparseable.js';
  *     Flow: serializedValue (deserializer) -> `.modelValue` (formatter) -> `.formattedValue` -> `._inputNode.value`
  *
  * @type {FormatMixin}
+ * @param {import('@open-wc/dedupe-mixin').Constructor<import('@lion/core').LitElement>} superclass
  */
 const FormatMixinImplementation = superclass =>
-  class FormatMixin extends superclass {
+  // @ts-expect-error overriding a private property _requestUpdate
+  class FormatMixin extends ValidateMixin(FormControlMixin(superclass)) {
     static get properties() {
       return {
         /**
@@ -120,6 +124,7 @@ const FormatMixinImplementation = superclass =>
      * @param {any} oldVal
      */
     _requestUpdate(name, oldVal) {
+      // @ts-expect-error overriding a private property _requestUpdate
       super._requestUpdate(name, oldVal);
 
       if (name === 'modelValue' && this.modelValue !== oldVal) {
@@ -405,7 +410,8 @@ const FormatMixinImplementation = superclass =>
         this._inputNode.removeEventListener('input', this._proxyInputEvent);
         this._inputNode.removeEventListener(
           this.formatOn,
-          this._reflectBackFormattedValueDebounced,
+          /** @type {EventListenerOrEventListenerObject} */ (this
+            ._reflectBackFormattedValueDebounced),
         );
       }
     }

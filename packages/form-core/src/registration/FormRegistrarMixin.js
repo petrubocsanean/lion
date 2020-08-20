@@ -1,13 +1,14 @@
 // eslint-disable-next-line max-classes-per-file
 import { dedupeMixin } from '@lion/core';
-import { FormRegisteringMixin } from './FormRegisteringMixin.js';
 import { FormControlsCollection } from './FormControlsCollection.js';
+import { FormRegisteringMixin } from './FormRegisteringMixin.js';
 
 // TODO: rename .formElements to .formControls? (or .$controls ?)
 
 /**
  * @typedef {import('../../types/registration/FormRegistrarMixinTypes').FormRegistrarMixin} FormRegistrarMixin
  * @typedef {import('../../types/registration/FormRegistrarMixinTypes').ElementWithParentFormGroup} ElementWithParentFormGroup
+ * @typedef {import('../../types/registration/FormRegisteringMixinTypes').FormRegisteringHost} FormRegisteringHost
  */
 
 /**
@@ -19,6 +20,7 @@ import { FormControlsCollection } from './FormControlsCollection.js';
  * For choice groups, the value will only stay an array.
  * See FormControlsCollection for more information
  * @type {FormRegistrarMixin}
+ * @param {import('@open-wc/dedupe-mixin').Constructor<HTMLElement>} superclass
  */
 const FormRegistrarMixinImplementation = superclass =>
   // eslint-disable-next-line no-shadow, no-unused-vars
@@ -45,7 +47,11 @@ const FormRegistrarMixinImplementation = superclass =>
       this._isFormOrFieldset = false;
 
       this._onRequestToAddFormElement = this._onRequestToAddFormElement.bind(this);
-      this.addEventListener('form-element-register', this._onRequestToAddFormElement);
+
+      this.addEventListener(
+        'form-element-register',
+        /** @type {EventListenerOrEventListenerObject} */ (this._onRequestToAddFormElement),
+      );
     }
 
     /**
@@ -75,12 +81,14 @@ const FormRegistrarMixinImplementation = superclass =>
       // 2. Add children as object key
       if (this._isFormOrFieldset) {
         // @ts-ignore
-        const { name } = child; // FIXME: <-- ElementWithParentFormGroup should become LionFieldWithParentFormGroup so that "name" exists
+        const { name } = child; // FIXME: <-- Fix when LionField is typed so that "name" exists
         if (!name) {
           console.info('Error Node:', child); // eslint-disable-line no-console
           throw new TypeError('You need to define a name');
         }
+        // @ts-ignore
         if (name === this.name) {
+          // FIXME: <-- Fix when LionField is typed so that "name" exists
           console.info('Error Node:', child); // eslint-disable-line no-console
           throw new TypeError(`You can not have the same name "${name}" as your parent`);
         }
@@ -106,7 +114,7 @@ const FormRegistrarMixinImplementation = superclass =>
     }
 
     /**
-     * @param {ElementWithParentFormGroup} child the child element (field)
+     * @param {FormRegisteringHost} child the child element (field)
      */
     removeFormElement(child) {
       // 1. Handle array based children
