@@ -25,12 +25,13 @@ export class Validator {
 
   /**
    * @desc The function that returns a Boolean
-   * @param {string|Date|Number|object} [modelValue]
+   * @param {?} [modelValue]
    * @param {?} [param]
+   * @param {{}} config
    * @returns {Boolean|Promise<Boolean>}
    */
   // eslint-disable-next-line no-unused-vars, class-methods-use-this
-  execute(modelValue, param) {
+  execute(modelValue, param, config) {
     const ctor = /** @type {typeof Validator} */ (this.constructor);
     if (!ctor.validatorName) {
       throw new Error(
@@ -67,6 +68,7 @@ export class Validator {
    * @param {object} [data]
    * @param {*} [data.modelValue]
    * @param {string} [data.fieldName]
+   * @param {HTMLElement} [data.formControl]
    * @param {*} [data.params]
    * @param {string|undefined} [data.type]
    * @returns {Promise<string|Node>}

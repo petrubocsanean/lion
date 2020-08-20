@@ -4,7 +4,7 @@ import { html, LitElement } from '@lion/core';
  * @typedef {import('../validate/Validator').Validator} Validator
  *
  * @typedef {Object} messageMap
- * @property {string} message
+ * @property {string | Node} message
  * @property {string} type
  * @property {Validator} [validator]
  */

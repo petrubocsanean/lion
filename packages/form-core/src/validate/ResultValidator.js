@@ -10,8 +10,8 @@ export class ResultValidator extends Validator {
   /**
    * @param {Object} context
    * @param {Validator[]} context.regularValidationResult
-   * @param {Validator[]} context.prevValidationResult
-   * @param {Validator[]} context.validators
+   * @param {Validator[] | undefined} context.prevValidationResult
+   * @param {Validator[]} [context.validators]
    * @returns {boolean}
    */
   // eslint-disable-next-line no-unused-vars, class-methods-use-this
