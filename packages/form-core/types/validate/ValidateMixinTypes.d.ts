@@ -1,7 +1,8 @@
-import { Constructor } from '@open-wc/dedupe-mixin';
 import { LitElement } from '@lion/core';
-import { Validator } from '../../src/validate/Validator';
 import { SlotsMap } from '@lion/core/types/SlotMixinTypes';
+import { Constructor } from '@open-wc/dedupe-mixin';
+import { LionValidationFeedback } from '../../src/validate/LionValidationFeedback';
+import { Validator } from '../../src/validate/Validator';
 
 type ScopedElementsMap = {
   [key: string]: typeof HTMLElement;
@@ -41,7 +42,7 @@ export declare class ValidateHost {
   hasFeedbackFor: string[];
   shouldShowFeedbackFor: string[];
   showsFeedbackFor: string[];
-  validationStates: { [key: string]: object };
+  validationStates: { [key: string]: { [key: string]: Object } };
   isPending: boolean;
   modelValue: unknown;
   defaultValidators: Validator[];
@@ -50,12 +51,13 @@ export declare class ValidateHost {
 
   static validationTypes: string[];
   slots: SlotsMap;
-  _feedbackNode: Element;
+  _feedbackNode: LionValidationFeedback;
   _allValidators: Validator[];
 
   __syncValidationResult: Validator[];
   __asyncValidationResult: Validator[];
   __validationResult: Validator[];
+  __prevValidationResult: Validator[];
 
   connectedCallback(): void;
   disconnectedCallback(): void;
@@ -63,10 +65,12 @@ export declare class ValidateHost {
   updateSync(name: string, oldValue: unknown): void;
   updated(changedProperties: import('lit-element').PropertyValues): void;
 
-  validate(opts: { clearCurrentResult?: boolean }): void;
+  validate(opts?: { clearCurrentResult?: boolean }): void;
   __storePrevResult(): void;
   __executeValidators(): void;
   validateComplete: Promise<void>;
+  feedbackComplete: Promise<void>;
+  __validateCompleteResolve(): void;
   __executeSyncValidators(
     syncValidators: Validator[],
     value: unknown,
@@ -89,6 +93,6 @@ export declare class ValidateHost {
 
 export declare function ValidateImplementation<T extends Constructor<LitElement>>(
   superclass: T,
-): T & Constructor<ValidateHost> & ValidateHost;
+): T & Constructor<ValidateHost> & typeof ValidateHost;
 
 export type ValidateMixin = typeof ValidateImplementation;

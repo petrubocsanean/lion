@@ -1,6 +1,6 @@
-import { expect, fixtureSync, defineCE, unsafeStatic, html, fixture } from '@open-wc/testing';
-import sinon from 'sinon';
 import { LitElement } from '@lion/core';
+import { defineCE, expect, fixture, fixtureSync, html, unsafeStatic } from '@open-wc/testing';
+import sinon from 'sinon';
 import { SyncUpdatableMixin } from '../../src/utils/SyncUpdatableMixin.js';
 
 describe('SyncUpdatableMixin', () => {
@@ -8,6 +8,7 @@ describe('SyncUpdatableMixin', () => {
     it('initializes all properties', async () => {
       let hasCalledFirstUpdated = false;
       let hasCalledUpdateSync = false;
+      // @ts-expect-error base constructors same return type
       class UpdatableImplementation extends SyncUpdatableMixin(LitElement) {
         static get properties() {
           return {
@@ -64,6 +65,7 @@ describe('SyncUpdatableMixin', () => {
     it('guarantees Member Order Independence', async () => {
       let hasCalledRunPropertyEffect = false;
 
+      // @ts-expect-error base constructors same return type
       class UpdatableImplementation extends SyncUpdatableMixin(LitElement) {
         static get properties() {
           return {
@@ -188,6 +190,7 @@ describe('SyncUpdatableMixin', () => {
 
   describe('After firstUpdated', () => {
     it('calls "updateSync" immediately when the observed property is changed (newValue !== oldValue)', async () => {
+      // @ts-expect-error base constructors same return type
       class UpdatableImplementation extends SyncUpdatableMixin(LitElement) {
         static get properties() {
           return {
@@ -243,6 +246,7 @@ describe('SyncUpdatableMixin', () => {
   describe('Features', () => {
     // See: https://lit-element.polymer-project.org/guide/lifecycle#haschanged
     it('supports "hasChanged" from UpdatingElement', async () => {
+      // @ts-expect-error base constructors same return type
       class UpdatableImplementation extends SyncUpdatableMixin(LitElement) {
         static get properties() {
           return {

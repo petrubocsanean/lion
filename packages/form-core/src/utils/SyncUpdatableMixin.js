@@ -21,8 +21,10 @@ import { dedupeMixin } from '@lion/core';
  * Whenever the implementation of `_requestUpdate` changes (this happened in the past for
  * `requestUpdate`) we only have to change our abstraction instead of all our components
  * @type {SyncUpdatableMixin}
+ * @param {import('@open-wc/dedupe-mixin').Constructor<import('@lion/core').LitElement>} superclass
  */
 const SyncUpdatableMixinImplementation = superclass =>
+  // @ts-expect-error overriding a private property _requestUpdate
   class SyncUpdatable extends superclass {
     constructor() {
       super();
@@ -52,6 +54,7 @@ const SyncUpdatableMixinImplementation = superclass =>
      * @param {*} oldValue
      */
     static __syncUpdatableHasChanged(name, newValue, oldValue) {
+      // @ts-ignore FIXME: Typescript bug, superclass static method not availabe from static context
       const properties = this._classProperties;
       if (properties.get(name) && properties.get(name).hasChanged) {
         return properties.get(name).hasChanged(newValue, oldValue);
@@ -61,7 +64,7 @@ const SyncUpdatableMixinImplementation = superclass =>
 
     __syncUpdatableInitialize() {
       const ns = this.__SyncUpdatableNamespace;
-      const ctor = /** @type {SyncUpdatableMixin & SyncUpdatable} */ (this.constructor);
+      const ctor = /** @type {typeof SyncUpdatable} */ (this.constructor);
 
       ns.initialized = true;
       // Empty queue...
@@ -79,12 +82,13 @@ const SyncUpdatableMixinImplementation = superclass =>
      * @param {*} oldValue
      */
     _requestUpdate(name, oldValue) {
+      // @ts-expect-error overriding something private
       super._requestUpdate(name, oldValue);
 
       this.__SyncUpdatableNamespace = this.__SyncUpdatableNamespace || {};
       const ns = this.__SyncUpdatableNamespace;
 
-      const ctor = /** @type {SyncUpdatableMixin & SyncUpdatable} */ (this.constructor);
+      const ctor = /** @type {typeof SyncUpdatable} */ (this.constructor);
 
       // Before connectedCallback: queue
       if (!ns.connected) {

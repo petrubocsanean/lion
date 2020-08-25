@@ -13,13 +13,12 @@ import { FormControlMixin } from './FormControlMixin.js';
  * - leaves a form field(blur) -> 'touched' will be set to true. 'prefilled' when a
  *   field is left non-empty
  * - on keyup (actually, on the model-value-changed event) -> 'dirty' will be set to true
- * @param {HTMLElement} superclass
- */
-
-/**
+ *
  * @type {InteractionStateMixin}
+ * @param {import('@open-wc/dedupe-mixin').Constructor<import('@lion/core').LitElement>} superclass
  */
 const InteractionStateMixinImplementation = superclass =>
+  // @ts-expect-error overriding a private property _requestUpdate
   class InteractionStateMixin extends FormControlMixin(superclass) {
     static get properties() {
       return {
@@ -68,6 +67,7 @@ const InteractionStateMixinImplementation = superclass =>
      * @param {*} oldVal
      */
     _requestUpdate(name, oldVal) {
+      // @ts-expect-error overriding a private property _requestUpdate
       super._requestUpdate(name, oldVal);
       if (name === 'touched' && this.touched !== oldVal) {
         this._onTouchedChanged();
@@ -105,18 +105,14 @@ const InteractionStateMixinImplementation = superclass =>
      * Register event handlers and validate prefilled inputs
      */
     connectedCallback() {
-      if (super.connectedCallback) {
-        super.connectedCallback();
-      }
+      super.connectedCallback();
       this.addEventListener(this._leaveEvent, this._iStateOnLeave);
       this.addEventListener(this._valueChangedEvent, this._iStateOnValueChange);
       this.initInteractionState();
     }
 
     disconnectedCallback() {
-      if (super.disconnectedCallback) {
-        super.disconnectedCallback();
-      }
+      super.disconnectedCallback();
       this.removeEventListener(this._leaveEvent, this._iStateOnLeave);
       this.removeEventListener(this._valueChangedEvent, this._iStateOnValueChange);
     }

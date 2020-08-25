@@ -1,6 +1,6 @@
-import { expect, fixture, html, unsafeStatic, defineCE } from '@open-wc/testing';
-import sinon from 'sinon';
 import { LitElement } from '@lion/core';
+import { defineCE, expect, fixture, html, unsafeStatic } from '@open-wc/testing';
+import sinon from 'sinon';
 import { ValidateMixin } from '../../src/validate/ValidateMixin.js';
 import { Validator } from '../../src/validate/Validator.js';
 
@@ -25,8 +25,8 @@ describe('Validator', () => {
   it('has an "execute" function returning "shown" state', async () => {
     class MyValidator extends Validator {
       /**
-       * @param {string} modelValue
-       * @param {string} param
+       * @param {string} [modelValue]
+       * @param {string} [param]
        */
       execute(modelValue, param) {
         const hasError = modelValue === 'test' && param === 'me';
@@ -135,13 +135,13 @@ describe('Validator', () => {
 
   it('has access to FormControl', async () => {
     const lightDom = '';
-    const tagString = defineCE(
-      class extends ValidateMixin(LitElement) {
-        static get properties() {
-          return { modelValue: String };
-        }
-      },
-    );
+    // @ts-expect-error base constructors same return type
+    class ValidateElement extends ValidateMixin(LitElement) {
+      static get properties() {
+        return { modelValue: String };
+      }
+    }
+    const tagString = defineCE(ValidateElement);
     const tag = unsafeStatic(tagString);
 
     class MyValidator extends Validator {
@@ -158,9 +158,9 @@ describe('Validator', () => {
     const connectSpy = sinon.spy(myVal, 'onFormControlConnect');
     const disconnectSpy = sinon.spy(myVal, 'onFormControlDisconnect');
 
-    const el = await fixture(html`
+    const el = /** @type {ValidateElement} */ (await fixture(html`
       <${tag} .validators=${[myVal]}>${lightDom}</${tag}>
-    `);
+    `));
 
     expect(connectSpy.callCount).to.equal(1);
     expect(connectSpy.calledWith(el)).to.equal(true);

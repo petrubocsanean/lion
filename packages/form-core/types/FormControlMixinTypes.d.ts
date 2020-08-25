@@ -1,6 +1,6 @@
-import { Constructor } from '@open-wc/dedupe-mixin';
+import { CSSResult, LitElement, nothing, TemplateResult } from '@lion/core';
 import { SlotsMap } from '@lion/core/types/SlotMixinTypes';
-import { LitElement, CSSResult, TemplateResult, nothing } from '@lion/core';
+import { Constructor } from '@open-wc/dedupe-mixin';
 
 export class FormControlMixinHost {
   static get properties(): {
@@ -48,6 +48,7 @@ export class FormControlMixinHost {
   _ariaLabelledNodes: HTMLElement[];
   _ariaDescribedNodes: HTMLElement[];
   _repropagationRole: 'child' | 'choice-group' | 'fieldset';
+  _isRepropagationEndpoint: boolean;
 
   connectedCallback(): void;
   updated(changedProperties: import('lit-element').PropertyValues): void;

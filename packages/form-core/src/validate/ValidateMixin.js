@@ -2,12 +2,12 @@
 import { dedupeMixin, ScopedElementsMixin, SlotMixin } from '@lion/core';
 // TODO: make form-core independent from localize
 import { localize } from '@lion/localize';
-import { LionValidationFeedback } from './LionValidationFeedback.js';
-import { ResultValidator } from './ResultValidator.js';
-import { Unparseable } from './Unparseable.js';
 import { AsyncQueue } from '../utils/AsyncQueue.js';
 import { pascalCase } from '../utils/pascalCase.js';
 import { SyncUpdatableMixin } from '../utils/SyncUpdatableMixin.js';
+import { LionValidationFeedback } from './LionValidationFeedback.js';
+import { ResultValidator } from './ResultValidator.js';
+import { Unparseable } from './Unparseable.js';
 import { Validator } from './Validator.js';
 import { Required } from './validators/Required.js';
 
@@ -286,7 +286,7 @@ export const ValidateMixinImplementation = superclass =>
      * Situations A.2 and A.3 are not mutually exclusive and can be triggered within one validate()
      * call. Situation B will occur after every call.
      *
-     * @param {{ clearCurrentResult?: boolean }} opts
+     * @param {{ clearCurrentResult?: boolean }} [opts]
      */
     async validate({ clearCurrentResult } = {}) {
       if (this.disabled) {
@@ -505,6 +505,7 @@ export const ValidateMixinImplementation = superclass =>
         const ctor = /** @type {typeof ValidateMixin} */ (this.constructor);
         const vCtor = /** @type {typeof Validator} */ (v.constructor);
         if (ctor.validationTypes.indexOf(v.type) === -1) {
+          const vCtor = /** @type {typeof Validator} */ (v.constructor);
           // throws in constructor are not visible to end user so we do both
           const errorMessage = `This component does not support the validator type "${v.type}" used in "${vCtor.validatorName}". You may change your validators type or add it to the components "static get validationTypes() {}".`;
           // eslint-disable-next-line no-console
