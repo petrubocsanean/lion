@@ -72,16 +72,6 @@ export function runValidateMixinFeedbackPart() {
       sinon.restore();
     });
 
-    it('has .shouldShowFeedbackFor indicating for which type to show messages', async () => {
-      const el = await fixture(html`
-        <${tag}>${lightDom}</${tag}>
-      `);
-      expect(el.shouldShowFeedbackFor).to.deep.equal([]);
-      el.submitted = true;
-      await el.updateComplete;
-      expect(el.shouldShowFeedbackFor).to.deep.equal(['error']);
-    });
-
     it('has .showsFeedbackFor indicating for which type it actually shows messages', async () => {
       const el = await fixture(html`
         <${tag} submitted .validators=${[new MinLength(3)]}>${lightDom}</${tag}>
@@ -284,26 +274,6 @@ export function runValidateMixinFeedbackPart() {
       await el.updateComplete;
       await el.feedbackComplete;
       expect(el._feedbackNode.feedbackData[0].message).to.equal('custom via config');
-    });
-
-    it('keeps the feedback component in sync', async () => {
-      const el = await fixture(html`
-        <${tag} .validators=${[new MinLength(3)]}>${lightDom}</${tag}>
-      `);
-      await el.updateComplete;
-      await el.feedbackComplete;
-      expect(el._feedbackNode.feedbackData).to.deep.equal([]);
-
-      // has error but does not show/forward to component as showCondition is not met
-      el.modelValue = '1';
-      await el.updateComplete;
-      await el.feedbackComplete;
-      expect(el._feedbackNode.feedbackData).to.deep.equal([]);
-
-      el.submitted = true;
-      await el.updateComplete;
-      await el.feedbackComplete;
-      expect(el._feedbackNode.feedbackData.length).to.equal(1);
     });
 
     it('updates the feedback component when locale changes', async () => {

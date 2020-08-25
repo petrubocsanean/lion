@@ -1,6 +1,7 @@
 import { CSSResult, LitElement, nothing, TemplateResult } from '@lion/core';
 import { SlotsMap } from '@lion/core/types/SlotMixinTypes';
 import { Constructor } from '@open-wc/dedupe-mixin';
+import { LionValidationFeedback } from '../src/validate/LionValidationFeedback';
 
 export class FormControlMixinHost {
   static get properties(): {
@@ -43,7 +44,7 @@ export class FormControlMixinHost {
   get _inputNode(): HTMLElement;
   get _labelNode(): HTMLElement;
   get _helpTextNode(): HTMLElement;
-  get _feedbackNode(): HTMLElement;
+  get _feedbackNode(): LionValidationFeedback | undefined;
   _inputId: string;
   _ariaLabelledNodes: HTMLElement[];
   _ariaDescribedNodes: HTMLElement[];

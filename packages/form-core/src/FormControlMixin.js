@@ -17,9 +17,9 @@ function uuid(prefix) {
  * This Mixin is a shared fundament for all form components, it's applied on:
  * - LionField (which is extended to LionInput, LionTextarea, LionSelect etc. etc.)
  * - LionFieldset (which is extended to LionRadioGroup, LionCheckboxGroup, LionForm)
- * @typedef {import('lit-html').TemplateResult} TemplateResult
- * @typedef {import('lit-element').CSSResult} CSSResult
- * @typedef {import('lit-html').nothing} nothing
+ * @typedef {import('@lion/core').TemplateResult} TemplateResult
+ * @typedef {import('@lion/core').CSSResult} CSSResult
+ * @typedef {import('@lion/core').nothing} nothing
  * @typedef {import('@lion/core/types/SlotMixinTypes').SlotsMap} SlotsMap
  * @typedef {import('../types/FormControlMixinTypes.js').FormControlMixin} FormControlMixin
  * @type {FormControlMixin}
@@ -186,7 +186,9 @@ const FormControlMixinImplementation = superclass =>
     }
 
     get _feedbackNode() {
-      return this.__getDirectSlotChild('feedback');
+      return /** @type {import('./validate/LionValidationFeedback') | undefined} */ (this.__getDirectSlotChild(
+        'feedback',
+      ));
     }
 
     constructor() {

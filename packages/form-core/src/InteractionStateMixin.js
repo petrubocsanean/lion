@@ -165,6 +165,27 @@ const InteractionStateMixinImplementation = superclass =>
     _onDirtyChanged() {
       this.dispatchEvent(new CustomEvent('dirty-changed', { bubbles: true, composed: true }));
     }
+
+    /**
+     * Show the validity feedback when one of the following conditions is met:
+     *
+     * - submitted
+     *   If the form is submitted, always show the error message.
+     *
+     * - prefilled
+     *   the user already filled in something, or the value is prefilled
+     *   when the form is initially rendered.
+     *
+     * - touched && dirty
+     *   When a user starts typing for the first time in a field with for instance `required`
+     *   validation, error message should not be shown until a field becomes `touched`
+     *   (a user leaves(blurs) a field).
+     *   When a user enters a field without altering the value(making it `dirty`),
+     *   an error message shouldn't be shown either.
+     */
+    _showFeedbackConditionFor() {
+      return (this.touched && this.dirty) || this.prefilled || this.submitted;
+    }
   };
 
 export const InteractionStateMixin = dedupeMixin(InteractionStateMixinImplementation);

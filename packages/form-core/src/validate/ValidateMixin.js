@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this, camelcase, no-param-reassign, max-classes-per-file */
-import { dedupeMixin, ScopedElementsMixin, SlotMixin } from '@lion/core';
+import { dedupeMixin, ScopedElementsMixin, SlotMixin, DisabledMixin } from '@lion/core';
 // TODO: make form-core independent from localize
 import { localize } from '@lion/localize';
 import { AsyncQueue } from '../utils/AsyncQueue.js';
@@ -10,6 +10,7 @@ import { ResultValidator } from './ResultValidator.js';
 import { Unparseable } from './Unparseable.js';
 import { Validator } from './Validator.js';
 import { Required } from './validators/Required.js';
+import { FormControlMixin } from '../FormControlMixin.js';
 
 /**
  * @typedef {import('../../types/validate/ValidateMixinTypes').ValidateMixin} ValidateMixin
@@ -28,19 +29,18 @@ function arrayDiff(array1 = [], array2 = []) {
  * UI. All error visibility, dom interaction and accessibility are handled in FeedbackMixin.
  *
  * @type {ValidateMixin}
+ * @param {import('@open-wc/dedupe-mixin').Constructor<import('@lion/core').LitElement>} superclass
  */
 export const ValidateMixinImplementation = superclass =>
   // eslint-disable-next-line no-unused-vars, no-shadow
-  class ValidateMixin extends SyncUpdatableMixin(SlotMixin(ScopedElementsMixin(superclass))) {
+  class ValidateMixin extends FormControlMixin(
+    SyncUpdatableMixin(DisabledMixin(SlotMixin(ScopedElementsMixin(superclass)))),
+  ) {
+    /**
+     * @return {import('@open-wc/scoped-elements').ScopedElementsMap}
+     */
     static get scopedElements() {
-      /**
-       * FIXME: Super ugly workaround to get static property from another mixin, by importing and declaring it as a new type..
-       * @typedef {import('@open-wc/scoped-elements').ScopedElementsMap} ScopedElementsMap
-       *
-       * @typedef {Object} ScopedElementsObj
-       * @property {ScopedElementsMap} scopedElements
-       */
-      const scopedElementsCtor = /** @type {ScopedElementsObj} */ (super.constructor);
+      const scopedElementsCtor = /** @type {typeof ValidateMixin} */ (super.constructor);
       return {
         ...scopedElementsCtor.scopedElements,
         'lion-validation-feedback': LionValidationFeedback,
@@ -93,13 +93,6 @@ export const ValidateMixinImplementation = superclass =>
          * By default, just like the platform, only one message (with highest prio) is visible.
          */
         _visibleMessagesAmount: { attribute: false },
-
-        /**
-         * will be passed as an argument to the `.getMessage`
-         * method of a Validator. When filled in, this field name can be used to enhance
-         * error messages.
-         */
-        fieldName: { attribute: false },
       };
     }
 
@@ -129,29 +122,6 @@ export const ValidateMixinImplementation = superclass =>
         ...super.slots,
         feedback: () => document.createElement(ctor.getScopedTagName('lion-validation-feedback')),
       };
-    }
-
-    /**
-     * @overridable
-     * @type {LionValidationFeedback} _feedbackNode:
-     * Gets a `FeedbackData` object as its input.
-     * This element can be a custom made (web) component that renders messages in accordance with
-     * the implemented Design System. For instance, it could add an icon in front of a message.
-     * The _feedbackNode is only responsible for the visual rendering part, it should NOT contain
-     * state. All state will be determined by the outcome of `FormControl.filterFeeback()`.
-     * FormControl delegates to individual sub elements and decides who renders what.
-     * For instance, FormControl itself is responsible for reflecting error-state and error-show
-     * to its host element.
-     * This means filtering out messages should happen in FormControl and NOT in `_feedbackNode`
-     *
-     * - gets a FeedbackData object as input
-     * - should know about the FeedbackMessage types('error', 'success' etc.) that the FormControl
-     * (having ValidateMixin applied) returns
-     * - renders result and
-     *
-     */
-    get _feedbackNode() {
-      return this.querySelector('[slot=feedback]');
     }
 
     get _allValidators() {
@@ -239,7 +209,7 @@ export const ValidateMixinImplementation = superclass =>
         // This can't be reflected asynchronously in Safari
         // Screen reader output should be in sync with visibility of error messages
         if (this._inputNode) {
-          this._inputNode.setAttribute('aria-invalid', this._hasFeedbackVisibleFor('error'));
+          this._inputNode.setAttribute('aria-invalid', `${this._hasFeedbackVisibleFor('error')}`);
           // this._inputNode.setCustomValidity(this._validationMessage || '');
         }
 
@@ -503,7 +473,6 @@ export const ValidateMixinImplementation = superclass =>
           throw new Error(errorMessage);
         }
         const ctor = /** @type {typeof ValidateMixin} */ (this.constructor);
-        const vCtor = /** @type {typeof Validator} */ (v.constructor);
         if (ctor.validationTypes.indexOf(v.type) === -1) {
           const vCtor = /** @type {typeof Validator} */ (v.constructor);
           // throws in constructor are not visible to end user so we do both
@@ -586,7 +555,8 @@ export const ValidateMixinImplementation = superclass =>
      * - we set aria-invalid="true" in case hasErrorVisible is true
      */
     _updateFeedbackComponent() {
-      if (!this._feedbackNode) {
+      const { _feedbackNode } = this;
+      if (!_feedbackNode) {
         return;
       }
 
@@ -602,37 +572,23 @@ export const ValidateMixinImplementation = superclass =>
           });
           const messageMap = await this.__getFeedbackMessages(this.__prioritizedResult);
 
-          this._feedbackNode.feedbackData = messageMap.length ? messageMap : [];
+          _feedbackNode.feedbackData = messageMap.length ? messageMap : [];
         });
       } else {
         this.__feedbackQueue.add(async () => {
-          this._feedbackNode.feedbackData = [];
+          _feedbackNode.feedbackData = [];
         });
       }
       this.feedbackComplete = this.__feedbackQueue.complete;
     }
 
     /**
-     * Show the validity feedback when one of the following conditions is met:
-     *
-     * - submitted
-     *   If the form is submitted, always show the error message.
-     *
-     * - prefilled
-     *   the user already filled in something, or the value is prefilled
-     *   when the form is initially rendered.
-     *
-     * - touched && dirty
-     *   When a user starts typing for the first time in a field with for instance `required`
-     *   validation, error message should not be shown until a field becomes `touched`
-     *   (a user leaves(blurs) a field).
-     *   When a user enters a field without altering the value(making it `dirty`),
-     *   an error message shouldn't be shown either.
+     * Show the validity feedback when returning true, don't show when false
      *  @param {string} type
      */
     // eslint-disable-next-line no-unused-vars
     _showFeedbackConditionFor(type) {
-      return (this.touched && this.dirty) || this.prefilled || this.submitted;
+      return true;
     }
 
     /**
@@ -676,8 +632,8 @@ export const ValidateMixinImplementation = superclass =>
      * @overridable
      * @desc Orders all active validators in this.__validationResult. Can
      * also filter out occurrences (based on interaction states)
-     * @param {{ validationResult: Validator[] }}
-     * @returns {Validator[]} ordered list of Validators with feedback messages visible to the
+     * @param {{ validationResult: Validator[] }} opts
+     * @return {Validator[]} ordered list of Validators with feedback messages visible to the
      * end user
      */
     _prioritizeAndFilterFeedback({ validationResult }) {
