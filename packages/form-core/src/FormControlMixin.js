@@ -186,7 +186,7 @@ const FormControlMixinImplementation = superclass =>
     }
 
     get _feedbackNode() {
-      return /** @type {import('./validate/LionValidationFeedback') | undefined} */ (this.__getDirectSlotChild(
+      return /** @type {import('./validate/LionValidationFeedback').LionValidationFeedback | undefined} */ (this.__getDirectSlotChild(
         'feedback',
       ));
     }

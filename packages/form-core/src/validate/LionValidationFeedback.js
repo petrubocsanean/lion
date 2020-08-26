@@ -23,7 +23,7 @@ export class LionValidationFeedback extends LitElement {
   /**
    * @overridable
    * @param {Object} opts
-   * @param {string} opts.message
+   * @param {string | Node} opts.message message or feedback node
    * @param {string} [opts.type]
    * @param {Validator} [opts.validator]
    */
