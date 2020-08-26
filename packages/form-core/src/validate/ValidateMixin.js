@@ -36,9 +36,6 @@ export const ValidateMixinImplementation = superclass =>
   class extends FormControlMixin(
     SyncUpdatableMixin(DisabledMixin(SlotMixin(ScopedElementsMixin(superclass)))),
   ) {
-    /**
-     * @return {import('@open-wc/scoped-elements').ScopedElementsMap}
-     */
     static get scopedElements() {
       const scopedElementsCtor = /** @type {typeof import('@open-wc/scoped-elements/src/types').ScopedElementsHost} */ (super
         .constructor);

@@ -22,9 +22,9 @@ import { FormRegistrarPortalMixin } from '../src/registration/FormRegistrarPorta
  */
 export const runRegistrationSuite = customConfig => {
   const cfg = {
+    // @ts-expect-error https://github.com/microsoft/TypeScript/issues/38535
+    baseElement: HTMLElement,
     ...customConfig,
-    // typescript 3.9 bug: https://github.com/microsoft/TypeScript/issues/38535 so doing it this way instead
-    baseElement: customConfig.baseElement || HTMLElement,
   };
 
   describe(`FormRegistrationMixins ${cfg.suffix}`, () => {
