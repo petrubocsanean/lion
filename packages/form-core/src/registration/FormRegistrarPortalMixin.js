@@ -21,7 +21,7 @@ import { dedupeMixin } from '@lion/core';
  */
 const FormRegistrarPortalMixinImplementation = superclass =>
   // eslint-disable-next-line no-shadow, no-unused-vars
-  class FormRegistrarPortalMixin extends superclass {
+  class extends superclass {
     constructor() {
       super();
       /** @type {(FormRegistrarPortalHost & HTMLElement) | undefined} */

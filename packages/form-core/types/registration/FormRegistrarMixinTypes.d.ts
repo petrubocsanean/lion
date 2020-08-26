@@ -22,6 +22,10 @@ export declare class FormRegistrarHost {
 
 export declare function FormRegistrarImplementation<T extends Constructor<HTMLElement>>(
   superclass: T,
-): T & Constructor<FormRegistrarHost> & FormRegistrarHost;
+): T &
+  Constructor<FormRegistrarHost> &
+  FormRegistrarHost &
+  Constructor<FormRegisteringHost> &
+  typeof FormRegisteringHost;
 
 export type FormRegistrarMixin = typeof FormRegistrarImplementation;

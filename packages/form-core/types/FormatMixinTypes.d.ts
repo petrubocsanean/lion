@@ -1,5 +1,7 @@
 import { Constructor } from '@open-wc/dedupe-mixin';
 import { LitElement } from '@lion/core';
+import { ValidateHost } from './validate/ValidateMixinTypes';
+import { FormControlHost } from './FormControlMixinTypes';
 
 export declare interface FormatOptions {
   locale?: string;
@@ -8,14 +10,12 @@ export declare interface FormatOptions {
 
 export declare class FormatHost {
   static properties: {
-    modelValue: { attribute: false };
     formattedValue: { attribute: false };
     serializedValue: { attribute: false };
     formatOn: { attribute: false };
     formatOptions: { attribute: false };
   };
 
-  modelValue: unknown;
   formattedValue: string;
   serializedValue: string;
   formatOn: string;
@@ -47,6 +47,12 @@ export declare class FormatHost {
 
 export declare function FormatImplementation<T extends Constructor<LitElement>>(
   superclass: T,
-): T & Constructor<FormatHost> & FormatHost;
+): T &
+  Constructor<FormatHost> &
+  FormatHost &
+  Constructor<ValidateHost> &
+  typeof ValidateHost &
+  Constructor<FormControlHost> &
+  typeof FormControlHost;
 
 export type FormatMixin = typeof FormatImplementation;

@@ -49,6 +49,21 @@ const FormControlMixinImplementation = superclass =>
           type: String,
           attribute: 'help-text',
         },
+
+        /**
+         * The model value is the result of the parser function(when available).
+         * It should be considered as the internal value used for validation and reasoning/logic.
+         * The model value is 'ready for consumption' by the outside world (think of a Date
+         * object or a float). The modelValue can(and is recommended to) be used as both input
+         * value and output value of the `LionField`.
+         *
+         * Examples:
+         * - For a date input: a String '20/01/1999' will be converted to new Date('1999/01/20')
+         * - For a number input: a formatted String '1.234,56' will be converted to a Number:
+         *   1234.56
+         */
+        modelValue: { attribute: false },
+
         /**
          * Contains all elements that should end up in aria-labelledby of `._inputNode`
          */

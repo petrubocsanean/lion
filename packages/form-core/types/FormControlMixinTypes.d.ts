@@ -1,9 +1,10 @@
 import { CSSResult, LitElement, nothing, TemplateResult } from '@lion/core';
-import { SlotsMap } from '@lion/core/types/SlotMixinTypes';
+import { SlotsMap, SlotHost } from '@lion/core/types/SlotMixinTypes';
 import { Constructor } from '@open-wc/dedupe-mixin';
 import { LionValidationFeedback } from '../src/validate/LionValidationFeedback';
+import { FormRegisteringHost } from './registration/FormRegisteringMixinTypes';
 
-export class FormControlMixinHost {
+export class FormControlHost {
   static get properties(): {
     name: {
       type: StringConstructor;
@@ -15,6 +16,9 @@ export class FormControlMixinHost {
     helpText: {
       type: StringConstructor;
       attribute: string;
+    };
+    modelValue: {
+      attribute: boolean;
     };
     _ariaLabelledNodes: {
       attribute: boolean;
@@ -31,6 +35,7 @@ export class FormControlMixinHost {
   };
   static get styles(): CSSResult | CSSResult[];
 
+  modelValue: unknown;
   set label(arg: string);
   get label(): string;
   __label: string | undefined;
@@ -101,6 +106,12 @@ export class FormControlMixinHost {
 
 export declare function FormControlImplementation<T extends Constructor<LitElement>>(
   superclass: T,
-): T & Constructor<FormControlMixinHost> & FormControlMixinHost;
+): T &
+  Constructor<FormControlHost> &
+  FormControlHost &
+  Constructor<FormRegisteringHost> &
+  typeof FormRegisteringHost &
+  Constructor<SlotHost> &
+  typeof SlotHost;
 
 export type FormControlMixin = typeof FormControlImplementation;

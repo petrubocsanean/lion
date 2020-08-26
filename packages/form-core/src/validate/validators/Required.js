@@ -1,7 +1,7 @@
 import { Validator } from '../Validator.js';
 
 /**
- * @typedef {import('../../../types/FormControlMixinTypes.js').FormControlMixinHost} FormControlMixinHost
+ * @typedef {import('../../../types/FormControlMixinTypes.js').FormControlHost} FormControlHost
  */
 
 export class Required extends Validator {
@@ -16,7 +16,7 @@ export class Required extends Validator {
    */
 
   /**
-   * @param {FormControlMixinHost & HTMLElement} formControl
+   * @param {FormControlHost & HTMLElement} formControl
    */
   // eslint-disable-next-line class-methods-use-this
   onFormControlConnect(formControl) {
@@ -26,7 +26,7 @@ export class Required extends Validator {
   }
 
   /**
-   * @param {FormControlMixinHost & HTMLElement} formControl
+   * @param {FormControlHost & HTMLElement} formControl
    */
   // eslint-disable-next-line class-methods-use-this
   onFormControlDisconnect(formControl) {

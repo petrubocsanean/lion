@@ -25,7 +25,7 @@ import { dedupeMixin } from '@lion/core';
  */
 const SyncUpdatableMixinImplementation = superclass =>
   // @ts-expect-error overriding a private property _requestUpdate
-  class SyncUpdatable extends superclass {
+  class extends superclass {
     constructor() {
       super();
       // Namespace for this mixin that guarantees naming clashes will not occur...
@@ -64,7 +64,8 @@ const SyncUpdatableMixinImplementation = superclass =>
 
     __syncUpdatableInitialize() {
       const ns = this.__SyncUpdatableNamespace;
-      const ctor = /** @type {typeof SyncUpdatable} */ (this.constructor);
+      const ctor = /** @type {typeof SyncUpdatableMixin & typeof import('../../types/utils/SyncUpdatableMixinTypes').SyncUpdatableHost} */ (this
+        .constructor);
 
       ns.initialized = true;
       // Empty queue...
@@ -88,7 +89,8 @@ const SyncUpdatableMixinImplementation = superclass =>
       this.__SyncUpdatableNamespace = this.__SyncUpdatableNamespace || {};
       const ns = this.__SyncUpdatableNamespace;
 
-      const ctor = /** @type {typeof SyncUpdatable} */ (this.constructor);
+      const ctor = /** @type {typeof SyncUpdatableMixin & typeof import('../../types/utils/SyncUpdatableMixinTypes').SyncUpdatableHost} */ (this
+        .constructor);
 
       // Before connectedCallback: queue
       if (!ns.connected) {

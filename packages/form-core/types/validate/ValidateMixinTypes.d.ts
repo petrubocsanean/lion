@@ -1,7 +1,11 @@
 import { LitElement } from '@lion/core';
-import { SlotsMap } from '@lion/core/types/SlotMixinTypes';
+import { DisabledHost } from '@lion/core/types/DisabledMixinTypes';
+import { SlotsMap, SlotHost } from '@lion/core/types/SlotMixinTypes';
 import { Constructor } from '@open-wc/dedupe-mixin';
+import { ScopedElementsHost } from '@open-wc/scoped-elements/src/types';
+import { FormControlHost } from '../FormControlMixinTypes';
 import { LionValidationFeedback } from '../../src/validate/LionValidationFeedback';
+import { SyncUpdatableHost } from '../utils/SyncUpdatableMixinTypes';
 import { Validator } from '../../src/validate/Validator';
 
 type ScopedElementsMap = {
@@ -15,8 +19,6 @@ type FeedbackMessage = {
 };
 
 export declare class ValidateHost {
-  static scopedElements: ScopedElementsMap;
-
   static properties: {
     validators: { attribute: false };
     hasFeedbackFor: { attribute: false };
@@ -33,7 +35,6 @@ export declare class ValidateHost {
       attribute: string;
       reflect: boolean;
     };
-    modelValue: { attribute: false };
     defaultValidators: { attribute: false };
     _visibleMessagesAmount: { attribute: false };
     fieldName: { attribute: false };
@@ -44,7 +45,6 @@ export declare class ValidateHost {
   showsFeedbackFor: string[];
   validationStates: { [key: string]: { [key: string]: Object } };
   isPending: boolean;
-  modelValue: unknown;
   defaultValidators: Validator[];
   _visibleMessagesAmount: number;
   fieldName: string;
@@ -93,6 +93,18 @@ export declare class ValidateHost {
 
 export declare function ValidateImplementation<T extends Constructor<LitElement>>(
   superclass: T,
-): T & Constructor<ValidateHost> & typeof ValidateHost;
+): T &
+  Constructor<ValidateHost> &
+  typeof ValidateHost &
+  Constructor<FormControlHost> &
+  typeof FormControlHost &
+  Constructor<SyncUpdatableHost> &
+  typeof SyncUpdatableHost &
+  Constructor<DisabledHost> &
+  typeof DisabledHost &
+  Constructor<SlotHost> &
+  typeof SlotHost &
+  Constructor<ScopedElementsHost> &
+  typeof ScopedElementsHost;
 
 export type ValidateMixin = typeof ValidateImplementation;

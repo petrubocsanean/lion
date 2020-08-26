@@ -29,11 +29,7 @@ export function runValidateMixinSuite(customConfig) {
   const lightDom = cfg.lightDom || '';
 
   // @ts-expect-error base constructor same return type
-  class ValidateElement extends ValidateMixin(LitElement) {
-    static get properties() {
-      return { modelValue: { attribute: false } };
-    }
-  }
+  class ValidateElement extends ValidateMixin(LitElement) {}
 
   // @ts-expect-error base constructor same return type
   class ValidateInputNode extends ValidateMixin(LitElement) {

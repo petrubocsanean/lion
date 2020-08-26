@@ -1,5 +1,6 @@
 import { Constructor } from '@open-wc/dedupe-mixin';
 import { LitElement } from '@lion/core';
+import { FormControlHost } from './FormControlMixinTypes';
 
 export declare class InteractionStateHost {
   static get properties(): {
@@ -43,6 +44,10 @@ export declare class InteractionStateHost {
 
 export declare function InteractionStateImplementation<T extends Constructor<LitElement>>(
   superclass: T,
-): T & Constructor<InteractionStateHost> & InteractionStateHost;
+): T &
+  Constructor<InteractionStateHost> &
+  InteractionStateHost &
+  Constructor<FormControlHost> &
+  typeof FormControlHost;
 
 export type InteractionStateMixin = typeof InteractionStateImplementation;

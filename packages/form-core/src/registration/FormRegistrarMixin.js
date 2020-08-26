@@ -24,7 +24,7 @@ import { FormRegisteringMixin } from './FormRegisteringMixin.js';
  */
 const FormRegistrarMixinImplementation = superclass =>
   // eslint-disable-next-line no-shadow, no-unused-vars
-  class FormRegistrarMixin extends FormRegisteringMixin(superclass) {
+  class extends FormRegisteringMixin(superclass) {
     static get properties() {
       return {
         /**

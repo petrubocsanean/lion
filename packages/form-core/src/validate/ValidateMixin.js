@@ -33,14 +33,15 @@ function arrayDiff(array1 = [], array2 = []) {
  */
 export const ValidateMixinImplementation = superclass =>
   // eslint-disable-next-line no-unused-vars, no-shadow
-  class ValidateMixin extends FormControlMixin(
+  class extends FormControlMixin(
     SyncUpdatableMixin(DisabledMixin(SlotMixin(ScopedElementsMixin(superclass)))),
   ) {
     /**
      * @return {import('@open-wc/scoped-elements').ScopedElementsMap}
      */
     static get scopedElements() {
-      const scopedElementsCtor = /** @type {typeof ValidateMixin} */ (super.constructor);
+      const scopedElementsCtor = /** @type {typeof import('@open-wc/scoped-elements/src/types').ScopedElementsHost} */ (super
+        .constructor);
       return {
         ...scopedElementsCtor.scopedElements,
         'lion-validation-feedback': LionValidationFeedback,
@@ -75,12 +76,6 @@ export const ValidateMixinImplementation = superclass =>
           attribute: 'is-pending',
           reflect: true,
         },
-
-        /**
-         * @desc value that al validation revolves around: once changed (usually triggered by
-         * end user entering input), it will automatically trigger validation.
-         */
-        modelValue: { attribute: false },
 
         /**
          * @desc specialized fields (think of input-date and input-email) can have preconfigured
@@ -410,7 +405,8 @@ export const ValidateMixinImplementation = superclass =>
       this.__validationResult = [...resultOutCome, ...syncAndAsyncOutcome];
       // this._storeResultsOnInstance(this.__validationResult);
 
-      const ctor = /** @type {typeof ValidateMixin} */ (this.constructor);
+      const ctor = /** @type {typeof import('../../types/validate/ValidateMixinTypes').ValidateHost} */ (this
+        .constructor);
 
       /** @type {Object.<string, Object.<string, boolean>>} */
       const validationStates = ctor.validationTypes.reduce(
@@ -472,7 +468,8 @@ export const ValidateMixinImplementation = superclass =>
           console.error(errorMessage, this);
           throw new Error(errorMessage);
         }
-        const ctor = /** @type {typeof ValidateMixin} */ (this.constructor);
+        const ctor = /** @type {typeof import('../../types/validate/ValidateMixinTypes').ValidateHost} */ (this
+          .constructor);
         if (ctor.validationTypes.indexOf(v.type) === -1) {
           const vCtor = /** @type {typeof Validator} */ (v.constructor);
           // throws in constructor are not visible to end user so we do both
@@ -611,7 +608,8 @@ export const ValidateMixinImplementation = superclass =>
         changedProperties.has('shouldShowFeedbackFor') ||
         changedProperties.has('hasFeedbackFor')
       ) {
-        const ctor = /** @type {typeof ValidateMixin} */ (this.constructor);
+        const ctor = /** @type {typeof import('../../types/validate/ValidateMixinTypes').ValidateHost} */ (this
+          .constructor);
         // Necessary typecast because types aren't smart enough to understand that we filter out undefined
         this.showsFeedbackFor = /** @type {string[]} */ (ctor.validationTypes
           .map(type => (this._hasFeedbackVisibleFor(type) ? type : undefined))
@@ -621,7 +619,8 @@ export const ValidateMixinImplementation = superclass =>
     }
 
     _updateShouldShowFeedbackFor() {
-      const ctor = /** @type {typeof ValidateMixin} */ (this.constructor);
+      const ctor = /** @type {typeof import('../../types/validate/ValidateMixinTypes').ValidateHost} */ (this
+        .constructor);
       // Necessary typecast because types aren't smart enough to understand that we filter out undefined
       this.shouldShowFeedbackFor = /** @type {string[]} */ (ctor.validationTypes
         .map(type => (this._showFeedbackConditionFor(type) ? type : undefined))
@@ -637,7 +636,8 @@ export const ValidateMixinImplementation = superclass =>
      * end user
      */
     _prioritizeAndFilterFeedback({ validationResult }) {
-      const ctor = /** @type {typeof ValidateMixin} */ (this.constructor);
+      const ctor = /** @type {typeof import('../../types/validate/ValidateMixinTypes').ValidateHost} */ (this
+        .constructor);
       const types = ctor.validationTypes;
       // Sort all validators based on the type provided.
       const res = validationResult.sort((a, b) => types.indexOf(a.type) - types.indexOf(b.type));

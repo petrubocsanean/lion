@@ -15,7 +15,7 @@ import { dedupeMixin } from '@lion/core';
  * @param {import('@open-wc/dedupe-mixin').Constructor<HTMLElement>} superclass
  */
 const FormRegisteringMixinImplementation = superclass =>
-  class FormRegisteringMixin extends superclass {
+  class extends superclass {
     /** @type {FormRegistrarHost | undefined} */
     __parentFormGroup;
 

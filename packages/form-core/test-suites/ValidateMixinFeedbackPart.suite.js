@@ -20,13 +20,6 @@ export function runValidateMixinFeedbackPart() {
     before(() => {
       tagString = defineCE(
         class extends ValidateMixin(LitElement) {
-          static get properties() {
-            return {
-              modelValue: { type: String },
-              submitted: { type: Boolean },
-            };
-          }
-
           connectedCallback() {
             super.connectedCallback();
             this.appendChild(document.createElement('input'));
