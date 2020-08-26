@@ -9,7 +9,7 @@ import { dedupeMixin } from '@open-wc/dedupe-mixin';
 /** @type {UpdateStylesMixin} */
 const UpdateStylesMixinImplementation = superclass =>
   // eslint-disable-next-line no-shadow
-  class UpdateStylesMixinHost extends superclass {
+  class extends superclass {
     /**
      * @example
      * <my-element>
