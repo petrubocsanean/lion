@@ -29,25 +29,17 @@ export function runValidateMixinSuite(customConfig) {
   const lightDom = cfg.lightDom || '';
 
   // @ts-expect-error base constructor same return type
-  class ValidateElement extends ValidateMixin(LitElement) {}
-
-  // @ts-expect-error base constructor same return type
-  class ValidateInputNode extends ValidateMixin(LitElement) {
+  class ValidateElement extends ValidateMixin(LitElement) {
     connectedCallback() {
       super.connectedCallback();
-      this.appendChild(document.createElement('input'));
-    }
-
-    get _inputNode() {
-      return this.querySelector('input');
+      const inputNode = document.createElement('input');
+      inputNode.slot = 'input';
+      this.appendChild(inputNode);
     }
   }
 
   const tagString = cfg.tagString || defineCE(ValidateElement);
   const tag = unsafeStatic(tagString);
-
-  const withInputTagString = cfg.tagString || defineCE(ValidateInputNode);
-  const withInputTag = unsafeStatic(withInputTagString);
 
   describe('ValidateMixin', () => {
     /**
@@ -723,12 +715,13 @@ export function runValidateMixinSuite(customConfig) {
       });
 
       it('adds [aria-required="true"] to "._inputNode"', async () => {
-        const el = /** @type {ValidateInputNode} */ (await fixture(html`
-          <${withInputTag}
+        const el = /** @type {ValidateElement} */ (await fixture(html`
+          <${tag}
             .validators=${[new Required()]}
             .modelValue=${''}
-          >${lightDom}</${withInputTag}>
+          >${lightDom}</${tag}>
         `));
+        console.log(el._inputNode);
         expect(el._inputNode?.getAttribute('aria-required')).to.equal('true');
         el.validators = [];
         expect(el._inputNode?.getAttribute('aria-required')).to.be.null;
@@ -898,7 +891,7 @@ export function runValidateMixinSuite(customConfig) {
 
     describe('Accessibility', () => {
       it.skip('calls "._inputNode.setCustomValidity(errorMessage)"', async () => {
-        const el = /** @type {ValidateInputNode} */ (await fixture(html`
+        const el = /** @type {ValidateElement} */ (await fixture(html`
           <${tag}
             .modelValue=${'123'}
             .validators=${[new MinLength(3, { message: 'foo' })]}>

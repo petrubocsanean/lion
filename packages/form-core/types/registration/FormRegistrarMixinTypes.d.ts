@@ -24,7 +24,7 @@ export declare function FormRegistrarImplementation<T extends Constructor<HTMLEl
   superclass: T,
 ): T &
   Constructor<FormRegistrarHost> &
-  FormRegistrarHost &
+  typeof FormRegistrarHost &
   Constructor<FormRegisteringHost> &
   typeof FormRegisteringHost;
 

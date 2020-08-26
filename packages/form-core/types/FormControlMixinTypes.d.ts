@@ -46,7 +46,7 @@ export class FormControlHost {
   get fieldName(): string;
   __fieldName: string | undefined;
   get slots(): SlotsMap;
-  get _inputNode(): HTMLElement;
+  get _inputNode(): HTMLFormElement;
   get _labelNode(): HTMLElement;
   get _helpTextNode(): HTMLElement;
   get _feedbackNode(): LionValidationFeedback | undefined;

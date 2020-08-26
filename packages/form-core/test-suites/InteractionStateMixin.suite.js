@@ -244,6 +244,7 @@ export function runInteractionStateMixinSuite(customConfig) {
 
     describe('SubClassers', () => {
       it('can override the `_leaveEvent`', async () => {
+        // @ts-expect-error base constructor same return type
         class IStateCustomBlur extends InteractionStateMixin(LitElement) {
           constructor() {
             super();
