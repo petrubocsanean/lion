@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.9.2
+
+### Patch Changes
+
+- 4dc621a0: Added @param JSDocs type annotation to make sure that the superclass types are properly inherited inside the mixins
+
 ## 0.9.1
 
 ### Patch Changes
